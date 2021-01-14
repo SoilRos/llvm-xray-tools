@@ -77,6 +77,17 @@ executed:
 
 ```bash
 llvm-xray-tools big_o --repeat 3 ./my_program test_1.txt test_2.txt test_3.txt ... test_9.txt
+
+1780             Cubic: time = 0.0014 + 7.4E-08*n^3 (sec)
+944               Quadratic: time = 2.7 + 0.036*n^2 (sec)
+3850       Quadratic: time = -0.00054 + 3.1E-05*n^2 (sec)
+3665    Linearithmic: time = 0.048 + 0.0047*n*log(n) (...
+1125            Linear: time = -6.4E-06 + 0.00023*n (sec)
+
+...
+
+941                        Constant: time = 1.2E-05 (sec)
+979                        Constant: time = 6.2E-06 (sec)
 ```
 
 This will run the program 3 times (i.e. `--repeat 3`) for each input and produce
