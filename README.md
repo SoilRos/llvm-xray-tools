@@ -71,13 +71,13 @@ how they should relate to the growth `n` that you want to measure.
 
 For instance, lets say that `my_program` receives a text file with the
 information to run, and that you have prepared multiple inputs for each case you
-want to test (e.g. `test_1.txt`, `test_2.txt`, `test_3.txt`, ..., `test_9.txt`).
+want to test (e.g. `test_2.txt`, `test_8.txt`, `test_14.txt`, ..., `test_32.txt`).
 
 In that case, you may provide the `llvm-xray-tools` with the program to be
 executed:
 
 ```bash
-llvm-xray-tools big_o --repeat 3 ./my_program test_1.txt test_2.txt test_3.txt ... test_9.txt
+llvm-xray-tools big_o --repeat 3 ./my_program test_2.txt test_8.txt test_14.txt ... test_32.txt
 
 1780             Cubic: time = 0.0014 + 7.4E-08*n^3 (sec)
 944               Quadratic: time = 2.7 + 0.036*n^2 (sec)
@@ -93,8 +93,8 @@ llvm-xray-tools big_o --repeat 3 ./my_program test_1.txt test_2.txt test_3.txt .
 
 This will run the program 3 times (i.e. `--repeat 3`) for each input and produce
 the complexity estimation for each function id. Notice that in this case, the
-growth variable `n` is deduced by each input (i.e. `1,2,3,...,9`), however, they
-may be provided using the `--n_list` argument (e.g. `--n_list 1,4,9,...,81`).
+growth variable `n` is deduced by each input (i.e. `2,8,14,...,32`), however, they
+may be provided using the `--n_list` argument (e.g. `--n_list 2,8,14,...,32`).
 
 Additionally, you may add the `--plot-dir <dir>` option to save the time graphs
 for each function id.
