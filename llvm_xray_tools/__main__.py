@@ -19,7 +19,7 @@ def sha256sum(filename):
     return h
 
 def big_o(args):
-  hash = sha256sum(args.program)
+  hash = sha256sum(args.program[0])
 
   # get growth numbers
   if not args.n_list:
@@ -39,18 +39,18 @@ def big_o(args):
   df = pandas.DataFrame()
   counter = {}
   for n, input in zip(args.n_list, args.input_list):
-    for i in range(args.repeat):
+    for i in range(args.repeat[0]):
       counter.setdefault(n,0)
       counter[n] += 1
       hash_n = hash.copy()
       hash_n.update(str(n).encode('ascii'))
       hash_n.update(str(counter[n]).encode('ascii'))
-      xray_file = xray_trace(args.program, input, hash_n.hexdigest(), args.cache)
+      xray_file = xray_trace(args.program[0], input, hash_n.hexdigest(), args.cache)
       df_n = xray_accounting(xray_file)
       df_n['n'] = n
       df = pandas.concat([df,df_n])
 
-  xray_big_o(df, args.plot_dir)
+  xray_big_o(df, args.plot_dir[0])
 
 parser = argparse.ArgumentParser(
             prog='llvm-xray-tools',
@@ -69,7 +69,7 @@ subparsers = parser.add_subparsers()
 
 big_o_parser = subparsers.add_parser('big_o', help='complexity calculator')
 big_o_parser.set_defaults(func = big_o)
-big_o_parser.add_argument('program', type=str, nargs='?',
+big_o_parser.add_argument('program', type=str, nargs=1,
                            help='executable instrumented with xray')
 big_o_parser.add_argument('--n_list', '-n', type=str,
                            help='list of comma-separated values that represent the growth of program inputs.'
