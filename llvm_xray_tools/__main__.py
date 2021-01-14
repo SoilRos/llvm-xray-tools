@@ -9,32 +9,6 @@ from .big_o import xray_trace
 from .big_o import xray_accounting
 from .big_o import xray_big_o
 
-parser = argparse.ArgumentParser(
-            prog='llvm-xray-tools',
-            description='Tools for analysing results produced by the llvm-xray instrumentation')
-
-parser.add_argument('--verbose', '-v', action='count', default=0)
-parser.add_argument('--version', action='version', version='%(prog)s 0.0.0')
-parser.add_argument('--loglevel', type=str, default='INFO', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'])
-parser.add_argument('--logformat', type=str, default='%(message)s')
-parser.add_argument('--no-cache', dest='cache', action='store_false',
-                           help='Do not use cache files for computations')
-parser.add_argument('--cache', action='store_true', default=True,
-                           help='Use cache files for computations')
-
-subparsers = parser.add_subparsers()
-
-big_o_parser = subparsers.add_parser('big_o', help='complexity calculator')
-big_o_parser.add_argument('program', type=str, nargs='?',
-                           help='executable instrumented with xray')
-big_o_parser.add_argument('--n_list', '-n', type=str,
-                           help='list of comma-separated values that represent the growth of program inputs.'
-                           'This argument is optional only if the value cannot be deduced from the input list')
-big_o_parser.add_argument('--repeat','-r', nargs='?', type=int,
-                          help= "times to repeat each argument")
-big_o_parser.add_argument('input_list', type=str, nargs='+',
-                           help='list input arguments to feed the executable on each run')
-
 def sha256sum(filename):
     h  = hashlib.sha256()
     b  = bytearray(128*1024)
@@ -44,15 +18,7 @@ def sha256sum(filename):
             h.update(mv[:n])
     return h
 
-
-def main():
-  """The main routine"""
-  args = parser.parse_args()
-
-  # set up logging
-  verbose_level = getattr(logging, args.loglevel) - args.verbose
-  logging.basicConfig(level=verbose_level, format=args.logformat)
-
+def big_o(args):
   hash = sha256sum(args.program)
 
   # get growth numbers
@@ -85,6 +51,43 @@ def main():
       df = pandas.concat([df,df_n])
 
   xray_big_o(df)
+
+parser = argparse.ArgumentParser(
+            prog='llvm-xray-tools',
+            description='Tools for analysing results produced by the llvm-xray instrumentation')
+
+parser.add_argument('--verbose', '-v', action='count', default=0)
+parser.add_argument('--version', action='version', version='%(prog)s 0.0.0')
+parser.add_argument('--loglevel', type=str, default='INFO', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'])
+parser.add_argument('--logformat', type=str, default='%(message)s')
+parser.add_argument('--no-cache', dest='cache', action='store_false',
+                           help='Do not use cache files for computations')
+parser.add_argument('--cache', action='store_true', default=True,
+                           help='Use cache files for computations (default)')
+
+subparsers = parser.add_subparsers()
+
+big_o_parser = subparsers.add_parser('big_o', help='complexity calculator')
+big_o_parser.set_defaults(func = big_o)
+big_o_parser.add_argument('program', type=str, nargs='?',
+                           help='executable instrumented with xray')
+big_o_parser.add_argument('--n_list', '-n', type=str,
+                           help='list of comma-separated values that represent the growth of program inputs.'
+                           'This argument is optional only if the value may be deduced from the input list')
+big_o_parser.add_argument('--repeat','-r', nargs='?', type=int,
+                          help= "times to repeat each argument")
+big_o_parser.add_argument('input_list', type=str, nargs='+',
+                           help='list input arguments to feed the executable on each run')
+
+
+def main():
+  """The main routine"""
+  args = parser.parse_args()
+
+  # set up logging
+  verbose_level = getattr(logging, args.loglevel) - args.verbose
+  logging.basicConfig(level=verbose_level, format=args.logformat)
+  args.func(args)
 
 if __name__ == "__main__":
     sys.exit(main())

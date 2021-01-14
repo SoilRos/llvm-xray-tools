@@ -6,6 +6,8 @@ import logging
 import csv
 import pandas
 import io
+import numpy
+import altair
 
 def llvm_xray_exec():
   if 'XRAY_EXECUTABLE' in os.environ:
@@ -19,7 +21,7 @@ def llvm_xray_exec():
 
 def xray_trace(program, args, id, cache = True):
 
-  xray_log = 'xray-log.%s' % id
+  xray_log = '/tmp/xray-log.%s' % id
 
   if cache and os.path.isfile(xray_log):
     return xray_log
@@ -92,16 +94,50 @@ def xray_big_o(stats):
     if len(times) < 4:
       continue
 
-    best, fitted = big_o.infer_big_o_class(ns,times)
+    classes = [
+        big_o.complexities.Constant,
+        big_o.complexities.Linear,
+        big_o.complexities.Quadratic,
+        big_o.complexities.Cubic,
+        # big_o.complexities.Polynomial, # broken
+        big_o.complexities.Logarithmic,
+        big_o.complexities.Linearithmic,
+        # big_o.complexities.Exponential # broken
+      ]
+
+    best, fitted = big_o.infer_big_o_class(ns,times,classes)
+
     stats.loc[stats['funcid'] == funcid,'complexity'] = best
-    stats.loc[stats['funcid'] == funcid,'complexity_other'] = [fitted]
+    stats.loc[stats['funcid'] == funcid,'complexities'] = [fitted]
+
+
+    loc = stats.loc[(stats['funcid'] == funcid)][['funcid','median','n']]
+    loc['fit'] = best.compute(ns)
+    circles = altair.Chart(loc).mark_circle().encode(
+        x='n',
+        y='median',
+    )
+    line = altair.Chart(loc).mark_line(
+      color='black'
+    ).encode(
+        x='n',
+        y='fit'
+    )
+
+    (line + circles).save('complexity-%s.html' % funcid)
+
 
   stats_by_funcid = stats.drop_duplicates('funcid')
-  complexity = pandas.DataFrame({
-    'funcid': stats_by_funcid['funcid'],
-    'complexity': stats_by_funcid['complexity'],
-  })
-  complexity.sort_values(by=['complexity'], ascending = False, inplace = True)
+  complexity = pandas.DataFrame(
+    {
+      'complexity': stats_by_funcid['complexity'].to_numpy(),
+      'complexities': stats_by_funcid['complexities'].to_numpy()
+    },
+    index= stats_by_funcid['funcid'].to_numpy(),
+    copy = True)
 
+  complexity.sort_values(by=['complexity'], ascending = False, inplace = True)
+  complexity.dropna(inplace=True)
   with pandas.option_context('display.max_rows', None, 'display.max_columns', None):
-   print(complexity)
+   print(complexity['complexity'])
+
