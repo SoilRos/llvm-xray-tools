@@ -15,19 +15,20 @@ git clone git@github.com:SoilRos/llvm-xray-tools.git
 pip install -e llvm-xray-tools
 ```
 
-Now, the `llvm-xray-tools` command should be reached from the terminal:
+Now, the `llvm-xray-tools` command may be reached from the terminal:
 
 ```
 llvm-xray-tools --help
 ```
 
-Then, you want to make sure that the tools are able to reach the extraction
+Then, you want to make sure that the it is able to reach the extraction
 tools provided by `llvm`. To do so, install the `llvm-tools` and give the
 desired `llvm-xray` executable to the `XRAY_EXECUTABLE` environment variable.
 This may vary from system to system. For instance, in debian, it would look like
 this:
 
 ```bash
+# for Debian
 apt-get install llvm-9-tools
 export XRAY_EXECUTABLE="llvm-xray-9"
 ```
@@ -38,8 +39,8 @@ _**Caveat:** instrumentation doesn't work on MacOS_
 
 
 XRay is a open source Google project that instrument event logs on entry and
-exit of functions. It may be used on production and be activated at run time
-with relativetely low overhead.
+exit of functions. It may be used in production and be activated at any time
+during run time with relativetely low overhead.
 
 
 ### Clang
@@ -57,7 +58,7 @@ No additional flags are required (e.g. `-g`, `-O2`, `-fno-omit-frame-pointer`).
 A minimal example would be:
 
 ```bash
-clang++ -fxray-instrument my_prgram.cc -o my_program
+clang++ -fxray-instrument -O3 my_prgram.cc -o my_program
 ```
 
 See more in [XRay documentation](https://llvm.org/docs/XRay.html).
@@ -66,7 +67,7 @@ See more in [XRay documentation](https://llvm.org/docs/XRay.html).
 
 In order to estimate the complexity of the instrumented functions, you should
 provide different inputs to the program that scale with respect to it as well as
-how they should relate to the growth that you want to measure.
+how they should relate to the growth `n` that you want to measure.
 
 For instance, lets say that `my_program` receives a text file with the
 information to run, and that you have prepared multiple inputs for each case you
@@ -93,11 +94,7 @@ llvm-xray-tools big_o --repeat 3 ./my_program test_1.txt test_2.txt test_3.txt .
 This will run the program 3 times (i.e. `--repeat 3`) for each input and produce
 the complexity estimation for each function id. Notice that in this case, the
 growth variable `n` is deduced by each input (i.e. `1,2,3,...,9`), however, they
-may be provided using the `--n_list` argument.
-
-```bash
-llvm-xray-tools big_o --repeat 3 --n_list 1,4,9,...,81 ./my_program test_1.txt test_2.txt test_3.txt ... test_9.txt
-```
+may be provided using the `--n_list` argument (e.g. `--n_list 1,4,9,...,81`).
 
 Additionally, you may add the `--plot-dir <dir>` option to save the time graphs
 for each function id.
@@ -117,7 +114,9 @@ If you need only one function id, grepping usually does the job. No need for
 complicated things here:
 
 ```bash
-llvm-xray extract my_program --symbolize | grep "id: <function_id>,"
+llvm-xray extract my_program --symbolize | grep "id: 1,"
+- { id: 1, address: 0x0000000001FEF530, function: 0x0000000001FEF530, kind: function-enter, always-instrument: false, function-name: main, version: 2 }
+- { id: 1, address: 0x0000000001FF0F96, function: 0x0000000001FEF530, kind: function-exit, always-instrument: false, function-name: main, version: 2 }
 ```
 
 In heavily template programs, even reading a single function is hassle because
