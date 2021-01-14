@@ -50,7 +50,7 @@ def big_o(args):
       df_n['n'] = n
       df = pandas.concat([df,df_n])
 
-  xray_big_o(df)
+  xray_big_o(df, args.plot_dir)
 
 parser = argparse.ArgumentParser(
             prog='llvm-xray-tools',
@@ -76,6 +76,8 @@ big_o_parser.add_argument('--n_list', '-n', type=str,
                            'This argument is optional only if the value may be deduced from the input list')
 big_o_parser.add_argument('--repeat','-r', nargs='?', type=int,
                           help= "times to repeat each argument")
+big_o_parser.add_argument('--plot-dir', nargs='?', type=str,
+                          help= "directory to plot complexity graph for each function id")
 big_o_parser.add_argument('input_list', type=str, nargs='+',
                            help='list input arguments to feed the executable on each run')
 

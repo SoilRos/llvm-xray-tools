@@ -10,6 +10,6 @@ setup(
             'llvm-xray-tools = llvm_xray_tools.__main__:main',
         ],
     },
-    install_requires=["argparse", "big_o", "pandas"],
+    install_requires=["argparse", "big_o", "pandas", "altair"],
     long_description=open('README.md').read(),
 )

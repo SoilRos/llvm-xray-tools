@@ -85,7 +85,7 @@ def xray_accounting(xray_log):
   # return accounting as a pandas dataframe
   return pandas.read_csv(io.StringIO(output))
 
-def xray_big_o(stats):
+def xray_big_o(stats, plot_dir = None):
   assert isinstance(stats,pandas.DataFrame)
 
   for funcid in stats.funcid.unique():
@@ -110,22 +110,23 @@ def xray_big_o(stats):
     stats.loc[stats['funcid'] == funcid,'complexity'] = best
     stats.loc[stats['funcid'] == funcid,'complexities'] = [fitted]
 
+    if plot_dir:
+      loc = stats.loc[(stats['funcid'] == funcid)][['funcid','median','n']]
+      loc['fit'] = best.compute(ns)
+      circles = altair.Chart(loc).mark_circle().encode(
+          x='n',
+          y='median',
+      )
+      line = altair.Chart(loc).mark_line(
+        color='black'
+      ).encode(
+          x='n',
+          y='fit'
+      )
 
-    loc = stats.loc[(stats['funcid'] == funcid)][['funcid','median','n']]
-    loc['fit'] = best.compute(ns)
-    circles = altair.Chart(loc).mark_circle().encode(
-        x='n',
-        y='median',
-    )
-    line = altair.Chart(loc).mark_line(
-      color='black'
-    ).encode(
-        x='n',
-        y='fit'
-    )
-
-    (line + circles).save('complexity-%s.html' % funcid)
-
+      assert os.path.isdir(plot_dir)
+      path = os.path.join(plot_dir, 'complexity-%s.html' % funcid)
+      (line + circles).save(path)
 
   stats_by_funcid = stats.drop_duplicates('funcid')
   complexity = pandas.DataFrame(
@@ -139,5 +140,5 @@ def xray_big_o(stats):
   complexity.sort_values(by=['complexity'], ascending = False, inplace = True)
   complexity.dropna(inplace=True)
   with pandas.option_context('display.max_rows', None, 'display.max_columns', None):
-   print(complexity['complexity'])
+   print(complexity['complexity'].to_string())
 
