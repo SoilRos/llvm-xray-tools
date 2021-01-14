@@ -74,9 +74,9 @@ big_o_parser.add_argument('program', type=str, nargs='?',
 big_o_parser.add_argument('--n_list', '-n', type=str,
                            help='list of comma-separated values that represent the growth of program inputs.'
                            'This argument is optional only if the value may be deduced from the input list')
-big_o_parser.add_argument('--repeat','-r', nargs='?', type=int,
+big_o_parser.add_argument('--repeat','-r', nargs=1, type=int,
                           help= "times to repeat each argument")
-big_o_parser.add_argument('--plot-dir', nargs='?', type=str,
+big_o_parser.add_argument('--plot-dir', nargs=1, type=str,
                           help= "directory to plot complexity graph for each function id")
 big_o_parser.add_argument('input_list', type=str, nargs='+',
                            help='list input arguments to feed the executable on each run')
