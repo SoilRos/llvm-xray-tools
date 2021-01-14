@@ -102,6 +102,8 @@ llvm-xray-tools big_o --repeat 3 --n_list 1,4,9,...,81 ./my_program test_1.txt t
 Additionally, you may add the `--plot-dir <dir>` option to save the time graphs
 for each function id.
 
+![complexity_plot](complexity_plot.png)
+
 ## Function symbolization
 
 To symbolize the function ids you can simply use the `llvm-xray` executable for
