@@ -54,10 +54,10 @@ To enable instrumentation, you should add the respective xray flags:
 | `-fxray-attr-list=xray-options.ini`   | External source for instrumentation options                                |
 
 No additional flags are required (e.g. `-g`, `-O2`, `-fno-omit-frame-pointer`).
-Example:
+A minimal example would be:
 
 ```bash
-clang++ -fxray-instrument -fxray-instruction-threshold=1 my_prgram.cc -o my_program
+clang++ -fxray-instrument my_prgram.cc -o my_program
 ```
 
 See more in [XRay documentation](https://llvm.org/docs/XRay.html).
