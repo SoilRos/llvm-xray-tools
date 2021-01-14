@@ -2,8 +2,8 @@
 
 This is a project that gathers useful scripts and used for analysing exacutables
 instrumented with the [`llvm-xray`](https://llvm.org/docs/XRay.html) project.
-In particular, it is a play ground to address where inefficiencies are coming
-from by computing stuffs the traces (i.e. computational complexity).
+In particular, it is a playground to address where inefficiencies are coming by
+computing stuffs from the traces (i.e. computational complexity).
 
 ## Installation and Setup
 
