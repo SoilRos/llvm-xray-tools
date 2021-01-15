@@ -126,7 +126,7 @@ def xray_big_o(stats, field = 'med', plot_dir = None):
       )
 
       assert os.path.isdir(plot_dir)
-      path = os.path.join(plot_dir, 'complexity-%s.html' % funcid)
+      path = os.path.join(plot_dir, '%s-%s.html' % (field, funcid))
       (line + circles).save(path)
 
   stats_by_funcid = stats.drop_duplicates('funcid')
