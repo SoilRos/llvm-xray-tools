@@ -3,6 +3,7 @@ import argparse
 import logging
 import itertools
 import pandas
+import os
 import hashlib
 
 from .big_o import xray_trace
