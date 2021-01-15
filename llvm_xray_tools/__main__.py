@@ -54,6 +54,8 @@ def big_o(args):
   plot_dir = args.plot_dir
   if plot_dir is not None:
     plot_dir = plot_dir[0]
+    if not os.path.exists(plot_dir):
+      os.makedirs(plot_dir)
 
   xray_big_o(df, args.field, plot_dir)
 
