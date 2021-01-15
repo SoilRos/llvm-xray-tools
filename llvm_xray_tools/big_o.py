@@ -46,11 +46,11 @@ def xray_trace(program, args, id, cache = True):
 
   # run program
   cmd = '%s %s' % (program, args)
-  logging.log(logging.INFO-1,"Tracing events on command: '%s'" % cmd)
+  logging.info("Tracing events on command: '%s'" % cmd)
   output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True, text=True)
 
   for line in output.splitlines():
-    logging.log(logging.INFO-3,"\t%s" % str(line))
+    logging.log(logging.INFO-1,"\t%s" % str(line))
 
   # set old xray settings back to environment
   if not xray_options is None:

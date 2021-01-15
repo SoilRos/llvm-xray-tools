@@ -61,10 +61,10 @@ parser.add_argument('--verbose', '-v', action='count', default=0)
 parser.add_argument('--version', action='version', version='%(prog)s 0.0.0')
 parser.add_argument('--loglevel', type=str, default='INFO', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'])
 parser.add_argument('--logformat', type=str, default='%(message)s')
-parser.add_argument('--no-cache', dest='cache', action='store_false',
-                           help='Do not use cache files for computations')
-parser.add_argument('--cache', action='store_true', default=True,
-                           help='Use cache files for computations (default)')
+parser.add_argument('--no-cache', dest='cache', action='store_false', default=False,
+                           help='Do not use cache files for computations (default)')
+parser.add_argument('--cache', action='store_true',
+                           help='Use cache files for computations')
 
 subparsers = parser.add_subparsers()
 
