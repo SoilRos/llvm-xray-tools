@@ -10,15 +10,16 @@ from .big_o import xray_accounting
 from .big_o import xray_big_o
 
 def sha256sum(filename):
-    h  = hashlib.sha256()
-    b  = bytearray(128*1024)
-    mv = memoryview(b)
-    with open(filename, 'rb', buffering=0) as f:
-        for n in iter(lambda : f.readinto(mv), 0):
-            h.update(mv[:n])
-    return h
+  h  = hashlib.sha256()
+  b  = bytearray(128*1024)
+  mv = memoryview(b)
+  with open(filename, 'rb', buffering=0) as f:
+      for n in iter(lambda : f.readinto(mv), 0):
+          h.update(mv[:n])
+  return h
 
 def big_o(args):
+  # check sum binary to use it as cache id
   hash = sha256sum(args.program[0])
 
   # get growth numbers
@@ -50,7 +51,7 @@ def big_o(args):
       df_n['n'] = n
       df = pandas.concat([df,df_n])
 
-  xray_big_o(df, args.plot_dir[0])
+  xray_big_o(df, args.field, args.plot_dir[0])
 
 parser = argparse.ArgumentParser(
             prog='llvm-xray-tools',
@@ -71,7 +72,7 @@ big_o_parser = subparsers.add_parser('big_o', help='complexity calculator')
 big_o_parser.set_defaults(func = big_o)
 big_o_parser.add_argument('program', type=str, nargs=1,
                            help='executable instrumented with xray')
-big_o_parser.add_argument('--n_list', '-n', type=str,
+big_o_parser.add_argument('--n-list', '-n', type=str,
                            help='list of comma-separated values that represent the growth of program inputs.'
                            'This argument is optional only if the value may be deduced from the input list')
 big_o_parser.add_argument('--repeat','-r', nargs=1, type=int, default=[1],
@@ -80,7 +81,8 @@ big_o_parser.add_argument('--plot-dir', nargs=1, type=str,
                           help= "directory to plot complexity graph for each function id")
 big_o_parser.add_argument('input_list', type=str, nargs='+',
                            help='list input arguments to feed the executable on each run')
-
+big_o_parser.add_argument('--field', type=str, default='med', choices=['count', 'med', 'min', '90p', '99p', 'max', 'sum'],
+                          help="field to be compared")
 
 def main():
   """The main routine"""

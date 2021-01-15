@@ -83,14 +83,16 @@ def xray_accounting(xray_log):
   output = subprocess.check_output(cmd, shell=True, text=True)
 
   # return accounting as a pandas dataframe
-  return pandas.read_csv(io.StringIO(output))
+  df = pandas.read_csv(io.StringIO(output))
+  df.rename(columns={"median": "med", df.columns[4]: "90p", df.columns[5]: "99p"}, inplace=True)
+  return df
 
-def xray_big_o(stats, plot_dir = None):
+def xray_big_o(stats, field = 'med', plot_dir = None):
   assert isinstance(stats,pandas.DataFrame)
 
   for funcid in stats.funcid.unique():
     ns = stats[stats['funcid'] == funcid]['n'].to_numpy()
-    times = stats[stats['funcid'] == funcid]['median'].to_numpy()
+    times = stats[stats['funcid'] == funcid][field].to_numpy()
     if len(times) < 4:
       continue
 
@@ -108,14 +110,13 @@ def xray_big_o(stats, plot_dir = None):
     best, fitted = big_o.infer_big_o_class(ns,times,classes)
 
     stats.loc[stats['funcid'] == funcid,'complexity'] = best
-    stats.loc[stats['funcid'] == funcid,'complexities'] = [fitted]
 
     if plot_dir:
-      loc = stats.loc[(stats['funcid'] == funcid)][['funcid','median','n']]
+      loc = stats.loc[(stats['funcid'] == funcid)][['funcid',field,'n']]
       loc['fit'] = best.compute(ns)
       circles = altair.Chart(loc).mark_circle().encode(
           x='n',
-          y='median',
+          y=field,
       )
       line = altair.Chart(loc).mark_line(
         color='black'
@@ -132,7 +133,6 @@ def xray_big_o(stats, plot_dir = None):
   complexity = pandas.DataFrame(
     {
       'complexity': stats_by_funcid['complexity'].to_numpy(),
-      'complexities': stats_by_funcid['complexities'].to_numpy()
     },
     index= stats_by_funcid['funcid'].to_numpy(),
     copy = True)
