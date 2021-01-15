@@ -50,7 +50,11 @@ def big_o(args):
       df_n['n'] = n
       df = pandas.concat([df,df_n])
 
-  xray_big_o(df, args.plot_dir[0])
+  plot_dir = args.plot_dir
+  if plot_dir is not None:
+    plot_dir = plot_dir[0]
+
+  xray_big_o(df, plot_dir)
 
 parser = argparse.ArgumentParser(
             prog='llvm-xray-tools',
