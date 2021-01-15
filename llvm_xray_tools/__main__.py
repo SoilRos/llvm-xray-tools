@@ -30,13 +30,13 @@ def big_o(args):
       # split all integers present in input
       numbers_in_input = [int(''.join(i)) for is_digit, i in itertools.groupby(input, str.isdigit) if is_digit]
       # if there is only one, we assume that's our number
-      assert len(numbers_in_input) == 1, "'n_list' cannot be deduced from 'input_list'"
+      assert len(numbers_in_input) == 1, "'n-list' cannot be deduced from 'input_list'"
       n_list.append(numbers_in_input[0])
     args.n_list = n_list
   else:
     args.n_list = args.n_list.split(',')
 
-  assert len(args.n_list) == len(args.input_list), "'n_list' must have the same size as 'input list'"
+  assert len(args.n_list) == len(args.input_list), "'n-list' must have the same size as 'input_list'"
 
   df = pandas.DataFrame()
   counter = {}

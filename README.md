@@ -96,7 +96,7 @@ llvm-xray-tools big_o --repeat 3 ./my_program test_2.txt test_8.txt test_14.txt 
 This will run the program 3 times (i.e. `--repeat 3`) for each input and produce
 the complexity estimation for each function id. Notice that in this case, the
 growth variable `n` is deduced by each input (i.e. `2,8,14,...,32`), however, they
-may be provided using the `--n_list` argument (e.g. `--n_list 2,8,14,...,32`).
+may be provided using the `--n-list` argument (e.g. `--n-list 2,8,14,...,32`).
 
 Additionally, you may add the `--plot-dir <dir>` option to save the time graphs
 for each function id.
